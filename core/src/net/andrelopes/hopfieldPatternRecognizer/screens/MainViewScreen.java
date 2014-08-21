@@ -20,19 +20,21 @@ import com.badlogic.gdx.utils.Disposable;
 import net.andrelopes.hopfieldPatternRecognizer.Assets;
 import net.andrelopes.hopfieldPatternRecognizer.logic.Hopfield;
 import net.andrelopes.hopfieldPatternRecognizer.utils.ColorTextureGenerator;
+import net.andrelopes.hopfieldPatternRecognizer.utils.Settings;
 
-/** revised by DermetFan :) Or Robin?
- *  @author André Vinícius Lopes */
+/**
+ * revised by DermetFan :) Or Robin?
+ *
+ * @author André Vinícius Lopes
+ */
 public class MainViewScreen extends ScreenAdapter {
 
     public Hopfield hopfield;
- 
+
     private Stage stage = new Stage();
     private Table imageGrid = new Table();
     private Table buttonsTable = new Table();
     private Array<Disposable> disposables = new Array<Disposable>();
-
-    private int hopfieldInputSize = 3;
 
     private Texture off = ColorTextureGenerator.rgb(0, 0, 0);
     private Texture on = ColorTextureGenerator.rgb(0.5f, 1.0f, 0.15f);
@@ -40,7 +42,7 @@ public class MainViewScreen extends ScreenAdapter {
     private final Drawable offDrawable = new TextureRegionDrawable(new TextureRegion(off));
     private final Drawable onDrawable = new TextureRegionDrawable(new TextureRegion(on));
 
-	@Override
+    @Override
     public void show() {
         hopfield = new Hopfield();
 
@@ -70,59 +72,70 @@ public class MainViewScreen extends ScreenAdapter {
 
         };
 
-        for (int x = hopfieldInputSize, y = hopfieldInputSize; y > 0; x--) {
+        for (int x = Settings.getInputColumns(), y = Settings.getInputRows(); y > 0; x--) {
             Image image = new Image(offDrawable);
             image.addListener(cl);
             @SuppressWarnings("unchecked")
-			Cell<Image> cell = imageGrid.add(image).size(25);
+            Cell<Image> cell = imageGrid.add(image).size(25);
             if (x == 1) {
                 cell.row();
                 y--;
-                x = hopfieldInputSize + 1;
+                x = Settings.getInputColumns() + 1;
             }
         }
 
-		Skin skin = Assets.getSkin();
+        Skin skin = Assets.getSkin();
 
-		TextButton train = new TextButton("Train", skin);
-		TextButton exit = new TextButton("Exit", skin);
-		TextButton presentPattern = new TextButton("Present Pattern", skin);
+        TextButton train = new TextButton("Train", skin);
+        TextButton exit = new TextButton("Exit", skin);
+        TextButton presentPattern = new TextButton("Present Pattern", skin);
+        TextButton options = new TextButton("Options", skin);
 
         train.setSize(5, 15);
-
+        options.setSize(5, 15);
         exit.setSize(5, 15);
         presentPattern.setSize(5, 15);
 
         buttonsTable.setPosition(Gdx.graphics.getWidth() / 2, 30);
-
         buttonsTable.add(train).size(Gdx.graphics.getWidth() / 3, 30);
         buttonsTable.add(presentPattern).size(Gdx.graphics.getWidth() / 3, 30);
         buttonsTable.add(exit).size(Gdx.graphics.getWidth() / 3, 30);
+        buttonsTable.row();
+        buttonsTable.add(options).size(Gdx.graphics.getWidth() / 3, 30);
 
         stage.addActor(buttonsTable);
 
-        //Add listeners
+        /**
+         * Add listeners
+         */
+        options.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+
         train.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				hopfield.train(getPattern());
-			}
-		});
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                hopfield.train(getPattern());
+            }
+        });
 
         presentPattern.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				boolean[] result = hopfield.present(getPattern());
-				showResultPattern(result);
-			}
-		});
-        
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                boolean[] result = hopfield.present(getPattern());
+                showResultPattern(result);
+            }
+        });
+
         exit.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Gdx.app.exit();
-			}
-		});
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
     }
 
     @Override
@@ -146,18 +159,18 @@ public class MainViewScreen extends ScreenAdapter {
     }
 
     public void showResultPattern(boolean[] pattern) {
-        for (int index = 0; index < (hopfieldInputSize * hopfieldInputSize); index++) {
+        for (int index = 0; index < (Settings.getInputRows() * Settings.getInputColumns()); index++) {
             Cell currentCell = imageGrid.getCells().get(index);
             Image image;
-            
+
             if (!pattern[index]) {
                 image = new Image(offDrawable);
 
-                currentCell.setActor(image).size(25);
+                currentCell.setActor(image).size(35);
 
             } else {
                 image = new Image(onDrawable);
-                currentCell.setActor(image).size(25);
+                currentCell.setActor(image).size(35);
             }
 
             ClickListener cl = new ClickListener() {
@@ -177,15 +190,16 @@ public class MainViewScreen extends ScreenAdapter {
                 }
 
             };
-            
+
             image.addListener(cl);
         }
     }
 
     public boolean[] getPattern() {
-        boolean[] patternFromGrid = new boolean[hopfieldInputSize * hopfieldInputSize];
+        boolean[] patternFromGrid = new boolean[Settings.getInputRows() * Settings.getInputColumns()];
 
-        for (int index = 0; index < (hopfieldInputSize * hopfieldInputSize); index++) {
+        for (int index = 0; index < (Settings.getInputRows() * Settings.getInputColumns()); index++) {
+
             Cell currentCell = imageGrid.getCells().get(index);
 
             if (currentCell.getActor() instanceof Image) {
