@@ -36,16 +36,14 @@ We use [gradle](http://gradle.org) for builds and dependency management. Assumin
 
 ```
 #!bash
-hg clone http://bitbucket.org/andrelopes1705/tsm-ga-solver TSM-GA-Solver
-cd TSM-GA-Solver
+hg clone http://bitbucket.org/andrelopes1705/hopfieldpatternrecognizer HopfieldPatternRecognizer
+cd HopfieldPatternRecognizer
 gradlew.bat :desktop:run
 ```
 
 The executable jar can be found in `desktop/build/libs/`. You can rebuild it any time without running the application using `gradlew.bat :desktop:build`.
 
 If you do not want to install Mercurial you can also [download](https://bitbucket.org/andrelopes1705hopfieldpatternrecognizer/downloads) the repository normally.
-
-
 
 ### Who do I talk to? ###
 
