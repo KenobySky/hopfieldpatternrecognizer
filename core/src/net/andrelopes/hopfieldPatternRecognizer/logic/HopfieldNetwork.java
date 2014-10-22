@@ -88,16 +88,13 @@ public class HopfieldNetwork {
         }
 
         //Create a row matrix from the input, convert boolean to bipolar
-        //final SimpleMatrix m2 = SimpleMatrix.createRowMatrix(BipolarUtilities.bipolar2double(pattern));
         DoubleMatrix m2 = BipolarUtilities.bipolar2double(pattern);
 
         // Transpose the matrix and multiply by the original input matrix
         DoubleMatrix m1 = m2.transpose(m2);
         DoubleMatrix m3 = m1.multiply(m1, m2);
 
-        // matrix 3 should be square by now, so create an identity
-        // matrix of the same size.
-        //final SimpleMatrix identity = MatrixMath.identity(m3.getRows());
+        // matrix 3 should be square by now, so create an identity matrix of the same size.
         DoubleMatrix identity = new DoubleMatrix(m3.numRows, m3.numCols);
         for (int i = 0; i < identity.numRows; i++) {
             for (int j = 0; j < identity.numCols; j++) {
@@ -109,20 +106,9 @@ public class HopfieldNetwork {
             }
         }
 
-        // subtract the identity matrix
-        //final Matrix m4 = MatrixMath.subtract(m3, identity);
-        //Fm1 Size9;9
-        //Fm2 Size9;1
-        //M3 :10000;10000
-        //M5 :10000;10000
-        System.out.println(" M3 :" + m3.numRows + ";" + m3.numCols);
-        System.out.println(" M5 :" + identity.numRows + ";" + identity.numCols);
-
         final DoubleMatrix m4 = m3.minus(m3, identity);
 
-        // now add the calculated matrix, for this pattern, to the
-        // existing weight matrix.
-        //this.weightMatrix = MatrixMath.add(this.weightMatrix, m4);
+        // now add the calculated matrix, for this pattern, to the existing weight matrix.
         weightMatrix = weightMatrix.add(weightMatrix, m4);
         trained = true;
     }

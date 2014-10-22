@@ -2,6 +2,7 @@ package net.andrelopes.hopfieldPatternRecognizer.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,9 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -44,6 +47,8 @@ public class MainViewScreen extends ScreenAdapter {
     private final Drawable onDrawable = new TextureRegionDrawable(new TextureRegion(on));
     private Window settingsWindow;
 
+    private Label infoLabel;
+
     @Override
     public void show() {
         hopfield = new Hopfield();
@@ -55,43 +60,16 @@ public class MainViewScreen extends ScreenAdapter {
 
         disposables.add(off);
         disposables.add(on);
-
-        ClickListener cl = new ClickListener() {
-
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!(event.getListenerActor() instanceof Image)) // safety
-                {
-                    return;
-                }
-                Image image = ((Image) event.getListenerActor());
-                if (image.getDrawable() == offDrawable) {
-                    image.setDrawable(onDrawable);
-                } else {
-                    image.setDrawable(offDrawable);
-                }
-            }
-
-        };
-
-        for (int x = Settings.getInputColumns(), y = Settings.getInputRows(); y > 0; x--) {
-            Image image = new Image(offDrawable);
-            image.addListener(cl);
-            @SuppressWarnings("unchecked")
-            Cell<Image> cell = imageGrid.add(image).size(25);
-            if (x == 1) {
-                cell.row();
-                y--;
-                x = Settings.getInputColumns() + 1;
-            }
-        }
-
+        resetGrid();
         Skin skin = Assets.getSkin();
 
         TextButton train = new TextButton("Train", skin);
         TextButton exit = new TextButton("Exit", skin);
         TextButton presentPattern = new TextButton("Present Pattern", skin);
         TextButton options = new TextButton("Options", skin);
+
+        infoLabel = new Label("Information ", skin);
+        infoLabel.setColor(Color.BLACK);
 
         train.setSize(5, 15);
         options.setSize(5, 15);
@@ -104,7 +82,7 @@ public class MainViewScreen extends ScreenAdapter {
         buttonsTable.add(exit).size(Gdx.graphics.getWidth() / 3, 30);
         buttonsTable.row();
         buttonsTable.add(options).size(Gdx.graphics.getWidth() / 3, 30);
-
+        buttonsTable.add(infoLabel).colspan(2).fillX();
         stage.addActor(buttonsTable);
 
         /**
@@ -113,6 +91,10 @@ public class MainViewScreen extends ScreenAdapter {
         options.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                settingsWindow.setVisible(!settingsWindow.isVisible());
+                settingsWindow.setPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+                System.out.println(settingsWindow.isVisible());
+                settingsWindow.top();
 
             }
         });
@@ -120,13 +102,16 @@ public class MainViewScreen extends ScreenAdapter {
         train.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                showInfo("Training Hopfield Neural Network..Please Wait!");
                 hopfield.train(getPattern());
+                showInfo("Finished Training Hopfield Neural Network!");
             }
         });
 
         presentPattern.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                showInfo("Presenting Pattern...");
                 boolean[] result = hopfield.present(getPattern());
                 if (result != null) {
                     showResultPattern(result);
@@ -142,9 +127,101 @@ public class MainViewScreen extends ScreenAdapter {
         });
 
         /**
-         *
+         * Build Settings Window
          */
         settingsWindow = new Window("Settings", skin);
+        settingsWindow.setVisible(false);
+        settingsWindow.setPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+
+        /**
+         * Create Actors for Settings Window
+         */
+        Label gridWidthLabel = new Label("Grid Width ", skin);
+        Label gridHeightLabel = new Label("Grid Height ", skin);
+
+        TextField.TextFieldFilter textFieldFilter = new TextField.TextFieldFilter() {
+            @Override
+            public boolean acceptChar(TextField textField, char c) {
+
+                if (textField.getText().isEmpty()) {
+                    if (c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9') {
+                        return true;
+                    }
+                } else if (!textField.getText().isEmpty()) {
+                    if (c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9' || c == '0') {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+
+        /**
+         * Accept Size of the Grid/Matrix
+         */
+        final TextField gridWidtheTextField = new TextField("", skin);
+        gridWidtheTextField.setTextFieldFilter(textFieldFilter);
+
+        final TextField gridHeightTextField = new TextField("", skin);
+        gridHeightTextField.setTextFieldFilter(textFieldFilter);
+
+        /**
+         * Apply Change Size of the Grid Based on the TextField
+         */
+        TextButton applyGridSizeTextButton = new TextButton("Apply", skin);
+        applyGridSizeTextButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                try {
+                    int width = Integer.parseInt(gridWidtheTextField.getText());
+                    Settings.setInputColumns(width);
+
+                    int height = Integer.parseInt(gridHeightTextField.getText());
+                    Settings.setInputRows(height);
+
+                    showInfo("Resetting Grid...");
+                    resetGrid();
+                } catch (java.lang.NumberFormatException ex) {
+                    showInfo("Invalid Grid Size!");
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        /**
+         * Hide Window
+         */
+        TextButton closeWindow = new TextButton("Close Window", skin);
+        closeWindow.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                settingsWindow.setVisible(false);
+            }
+        });
+
+        /**
+         * Add Actors to Settings Window
+         */
+        //First row
+        settingsWindow.add(gridWidthLabel).expand().padRight(5);
+        settingsWindow.add(gridWidtheTextField).expand().row();
+
+        //Second Row
+        settingsWindow.add(gridHeightLabel).expand().padRight(5);
+        settingsWindow.add(gridHeightTextField).expand().row();
+
+        settingsWindow.add(applyGridSizeTextButton).fillX().expand().colspan(2).row().pad(5);
+        settingsWindow.add(closeWindow).expand().colspan(2).fillX().pad(5);
+
+        /**
+         * Pack
+         */
+        settingsWindow.pack();
+
+        /**
+         * Add Window to Stage
+         */
+        stage.addActor(settingsWindow);
 
     }
 
@@ -169,6 +246,8 @@ public class MainViewScreen extends ScreenAdapter {
     }
 
     public void showResultPattern(boolean[] pattern) {
+
+        showInfo("Showing Result...");
         for (int index = 0; index < (Settings.getInputRows() * Settings.getInputColumns()); index++) {
             Cell currentCell = imageGrid.getCells().get(index);
             Image image;
@@ -226,6 +305,47 @@ public class MainViewScreen extends ScreenAdapter {
         }
 
         return patternFromGrid;
+    }
+
+    private void resetGrid() {
+
+        ClickListener cl = new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!(event.getListenerActor() instanceof Image)) // safety
+                {
+                    return;
+                }
+                Image image = ((Image) event.getListenerActor());
+                if (image.getDrawable() == offDrawable) {
+                    image.setDrawable(onDrawable);
+                } else {
+                    image.setDrawable(offDrawable);
+                }
+            }
+
+        };
+
+        if (imageGrid != null) {
+            imageGrid.clear();
+        }
+        
+        for (int x = Settings.getInputColumns(), y = Settings.getInputRows(); y > 0; x--) {
+            Image image = new Image(offDrawable);
+            image.addListener(cl);
+            @SuppressWarnings("unchecked")
+            Cell<Image> cell = imageGrid.add(image).size(25);
+            if (x == 1) {
+                cell.row();
+                y--;
+                x = Settings.getInputColumns() + 1;
+            }
+        }
+    }
+
+    public void showInfo(String msg) {
+        infoLabel.setText(msg);
     }
 
 }
