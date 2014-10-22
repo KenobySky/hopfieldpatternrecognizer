@@ -9,14 +9,17 @@ It can run on Android2.2+ and devices with java installed.
 **Examples:**
 
 Picture 1 : Main screen showing a 2x2 grid
+
 ![Main Screen.png](https://bitbucket.org/repo/po7o54/images/2879479050-Main%20Screen.png)
 
 
 Picture 2 : Settings Window
+
 ![Settings .png](https://bitbucket.org/repo/po7o54/images/4123574713-Settings%20.png)
 
 
 Picture 3 : Training a pattern
+
 ![Train.png](https://bitbucket.org/repo/po7o54/images/4077923614-Train.png)
 
 
