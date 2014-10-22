@@ -1,4 +1,4 @@
-# Hopfield Pattern Recognizer # 
+# Hopfield Pattern Recognizer #
 
 
 ### What is this repository for? ###
