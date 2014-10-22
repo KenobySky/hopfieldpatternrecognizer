@@ -2,25 +2,27 @@
 
 
 ### What is this repository for? ###
-
 Using Hopfield Neural network, this app is able to identify patterns from a grid / matrix.When the user click in one of the cells, it either enables it or disables. The Neural network can be trained with that grid and the user can present another or the same grid for recognizement.
 
-Examples:
+It can run on Android2.2+ and devices with java installed.
+
+**Examples:**
 
 Picture 1 : Main screen showing a 2x2 grid
-![Main Screen.png](https://bitbucket.org/repo/po7o54/images/3985879078-Main%20Screen.png)
+![Main Screen.png](https://bitbucket.org/repo/po7o54/images/2879479050-Main%20Screen.png)
 
 
 Picture 2 : Settings Window
-![Settings .png](https://bitbucket.org/repo/po7o54/images/4260489552-Settings%20.png)
+![Settings .png](https://bitbucket.org/repo/po7o54/images/4123574713-Settings%20.png)
 
 
 Picture 3 : Training a pattern
-![Train.png](https://bitbucket.org/repo/po7o54/images/2625006082-Train.png)
+![Train.png](https://bitbucket.org/repo/po7o54/images/4077923614-Train.png)
 
 
 * Version
-Currently its just a small program.But its planned to add a lot more features.
+Currently its just a small program.
+But its planned to add a lot more features.
 
 
 
@@ -44,4 +46,4 @@ If you do not want to install Mercurial you can also [download](https://bitbucke
 
 ### Who do I talk to? ###
 
-Send a private message to [André Lopes](http://bitbucket.org/andrelopes1705) 
+Send a private message to [André Lopes](http://bitbucket.org/andrelopes1705)
