@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -41,6 +42,7 @@ public class MainViewScreen extends ScreenAdapter {
 
     private final Drawable offDrawable = new TextureRegionDrawable(new TextureRegion(off));
     private final Drawable onDrawable = new TextureRegionDrawable(new TextureRegion(on));
+    private Window settingsWindow;
 
     @Override
     public void show() {
@@ -126,7 +128,9 @@ public class MainViewScreen extends ScreenAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 boolean[] result = hopfield.present(getPattern());
-                showResultPattern(result);
+                if (result != null) {
+                    showResultPattern(result);
+                }
             }
         });
 
@@ -136,6 +140,12 @@ public class MainViewScreen extends ScreenAdapter {
                 Gdx.app.exit();
             }
         });
+
+        /**
+         *
+         */
+        settingsWindow = new Window("Settings", skin);
+
     }
 
     @Override

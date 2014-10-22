@@ -13,17 +13,6 @@ import cookie.Matrixes.DoubleMatrix;
 import net.andrelopes.hopfieldPatternRecognizer.utils.BipolarUtilities;
 import net.andrelopes.hopfieldPatternRecognizer.utils.ExtraMatrixUtils;
 
-/**
- * André: I made several changes to this Class... But since was based on the
- * given class, i decided to give credit, etc :P
- *
- * HopfieldNetwork: This class implements a Hopfield neural network. A Hopfield
- * neural network is fully connected and consists of a single layer. Hopfield
- * neural networks are usually used for pattern recognition.
- *
- * @author Jeff Heaton
- * @version 2.1
- */
 public class HopfieldNetwork {
 
     /**
@@ -34,6 +23,7 @@ public class HopfieldNetwork {
      * boolean values.
      */
     private DoubleMatrix weightMatrix;
+    public boolean trained = false;
 
     public HopfieldNetwork(final int size) {
         this.weightMatrix = new DoubleMatrix(size, size);
@@ -119,7 +109,7 @@ public class HopfieldNetwork {
             }
         }
 
-		// subtract the identity matrix
+        // subtract the identity matrix
         //final Matrix m4 = MatrixMath.subtract(m3, identity);
         //Fm1 Size9;9
         //Fm2 Size9;1
@@ -134,6 +124,11 @@ public class HopfieldNetwork {
         // existing weight matrix.
         //this.weightMatrix = MatrixMath.add(this.weightMatrix, m4);
         weightMatrix = weightMatrix.add(weightMatrix, m4);
+        trained = true;
+    }
+
+    public boolean isTrained() {
+        return trained;
     }
 
 }

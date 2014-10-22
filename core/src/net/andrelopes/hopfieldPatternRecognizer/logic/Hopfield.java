@@ -21,13 +21,18 @@ public class Hopfield {
     }
 
     public boolean[] present(boolean[] presentPattern) {
-        System.out.println("Presenting Pattern to Hopfield network with: " + formatBoolean(presentPattern));
-        boolean[] result = network.present(presentPattern);
-        System.out.println("Result Pattern of the Hopfield network : " + formatBoolean(result));
-        return result;
+        if (network != null) {
+            System.out.println("Presenting Pattern to Hopfield network with: " + formatBoolean(presentPattern));
+            boolean[] result = network.present(presentPattern);
+            System.out.println("Result Pattern of the Hopfield network : " + formatBoolean(result));
+
+            return result;
+        } else {
+            return null;
+        }
     }
 
-    //I didnt change this method from Jeff heaton Book.
+
     public static String formatBoolean(final boolean b[]) {
         final StringBuilder result = new StringBuilder();
         result.append('[');
